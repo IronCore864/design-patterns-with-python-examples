@@ -1,71 +1,71 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from random import randint
 
 
 class Mediator(ABC):
-    def notify(self, sender: object, event: str) -> None:
+    @abstractmethod
+    def notify(self, sender: Component, event: str):
         pass
 
 
-class ConcreteMediator(Mediator):
-    def __init__(self, component1: Component1, component2: Component2) -> None:
-        self._component1 = component1
-        self._component1.mediator = self
-        self._component2 = component2
-        self._component2.mediator = self
+class AuthenticationDialog(Mediator):
+    def __init__(self):
+        self.title = ''
 
-    def notify(self, sender: object, event: str) -> None:
-        if event == "A":
-            print("Mediator reacts on A and triggers following operations:")
-            self._component2.do_c()
-        elif event == "D":
-            print("Mediator reacts on D and triggers following operations:")
-            self._component1.do_b()
-            self._component2.do_c()
+    def notify(self, sender, event):
+        if sender.name == 'login_or_register_checkbox' and event == 'check':
+            if randint(0, 1):
+                self.title = 'Log in'
+                print('Showing login form components.')
+                print('Hiding registration form components.')
+            else:
+                print('Showing registration form components.')
+                print('Hiding login form components.')
 
-
-class BaseComponent:
-    def __init__(self, mediator: Mediator = None) -> None:
-        self._mediator = mediator
-
-    @ property
-    def mediator(self) -> Mediator:
-        return self._mediator
-
-    @ mediator.setter
-    def mediator(self, mediator: Mediator) -> None:
-        self._mediator = mediator
+        if sender.name == 'ok_button' and event == 'click':
+            if randint(0, 1):
+                print('Trying to find a user using login credentials.')
+                print('Logged in.')
+            else:
+                print('Create a user account using data from the registration fields.')
+                print('Log that user in.')
 
 
-class Component1(BaseComponent):
-    def do_a(self) -> None:
-        print("Component 1 does A.")
-        self.mediator.notify(self, "A")
+class Component:
+    def __init__(self, dialog, name):
+        self.dialog = dialog
+        self.name = name
 
-    def do_b(self) -> None:
-        print("Component 1 does B.")
-        self.mediator.notify(self, "B")
+    def click(self):
+        self.dialog.notify(self, 'click')
 
-
-class Component2(BaseComponent):
-    def do_c(self) -> None:
-        print("Component 2 does C.")
-        self.mediator.notify(self, "C")
-
-    def do_d(self) -> None:
-        print("Component 2 does D.")
-        self.mediator.notify(self, "D")
+    def keypress(self):
+        self.dialog.notify(self, 'keypress')
 
 
-if __name__ == "__main__":
-    c1 = Component1()
-    c2 = Component2()
-    mediator = ConcreteMediator(c1, c2)
+class Button(Component):
+    def check(self):
+        self.dialog.notify(self, 'click')
 
-    print("Client triggers operation A.")
-    c1.do_a()
 
-    print()
+class Checkbox(Component):
+    def check(self):
+        self.dialog.notify(self, 'check')
 
-    print("Client triggers operation D.")
-    c2.do_d()
+
+def client_code():
+    d = AuthenticationDialog()
+    login_or_register_checkbox = Checkbox(d, 'login_or_register_checkbox')
+    ok_button = Button(d, 'ok_button')
+
+    tests = 3
+    for i in range(1, tests+1):
+        print(f'Test {tests}')
+        login_or_register_checkbox.check()
+        ok_button.click()
+        print()
+
+
+if __name__ == '__main__':
+    client_code()
