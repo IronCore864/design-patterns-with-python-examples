@@ -3,71 +3,87 @@ from abc import ABC, abstractmethod
 from typing import List
 
 
-class Item(ABC):
-    @property
-    def parent(self) -> Item:
-        return self._parent
-
-    @parent.setter
-    def parent(self, parent: Item):
-        self._parent = parent
-
-    def add(self, Item: Item) -> None:
-        pass
-
-    def remove(self, Item: Item) -> None:
+class Graphic(ABC):
+    @abstractmethod
+    def move(self, x, y):
         pass
 
     @abstractmethod
-    def price(self) -> int:
+    def draw(self):
         pass
 
 
-class Phone(Item):
-    def price(self) -> int:
-        return 5000
+class Dot(Graphic):
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+    def move(self, x, y):
+        self.x += x
+        self.y += y
+
+    def draw(self):
+        print(f'Draw a dot at {self.x} and {self.y}.')
 
 
-class Charger(Item):
-    def price(self) -> int:
-        return 200
+class Circle(Dot):
+    def __init__(self, x, y, radius):
+        self.x, self.y, self.radius = x, y, radius
+
+    def draw(self):
+        print(
+            f'Draw a Circle at {self.x} and {self.y} with radius {self.radius}')
 
 
-class Receipt(Item):
-    def price(self) -> int:
-        return 0
+class CompoundGraphic(Graphic):
+    def __init__(self):
+        self.children = []
+
+    def add(self, child: Graphic):
+        self.children.append(child)
+
+    def remove(self, child: Graphic):
+        self.children.remove(child)
+
+    def move(self, x, y):
+        for child in self.children:
+            child.move(x, y)
+
+    def draw(self):
+        for child in self.children:
+            child.draw()
 
 
-class Box(Item):
-    def __init__(self) -> None:
-        self._children: List[Item] = []
+class ImageEditor:
+    def load(self, components: List[Graphic]):
+        self.all = CompoundGraphic()
+        for c in components:
+            self.all.add(c)
 
-    def add(self, Item: Item) -> None:
-        self._children.append(Item)
-        Item.parent = self
+    def show(self):
+        self.all.draw()
 
-    def remove(self, Item: Item) -> None:
-        self._children.remove(Item)
-        Item.parent = None
+    def group_selected(self, components: List[Graphic]):
+        group = CompoundGraphic()
+        for c in components:
+            group.add(c)
+            self.all.remove(c)
+        self.all.add(group)
+        self.all.draw()
 
-    def price(self) -> str:
-        res = 10 if len(self._children) == 1 else 30
-        for child in self._children:
-            res += child.price()
-        return res
+
+def client_code():
+    d1, d2, d3 = Dot(1, 2), Dot(3, 4), Dot(5, 6),
+    c1, c2 = Circle(5, 3, 10), Circle(4, 2, 5)
+    components = [d1, d2, d3, c1, c2]
+
+    ie = ImageEditor()
+    ie.load(components)
+    ie.show()
+
+    print()
+
+    ie.group_selected([d1, d2])
 
 
 if __name__ == "__main__":
-    box = Box()
-
-    small_box1 = Box()
-    small_box1.add(Phone())
-    small_box1.add(Charger())
-
-    small_box2 = Box()
-    small_box2.add(Receipt())
-
-    box.add(small_box1)
-    box.add(small_box2)
-
-    print(box.price())
+    client_code()
