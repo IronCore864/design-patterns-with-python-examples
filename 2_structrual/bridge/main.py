@@ -39,7 +39,7 @@ class Radio(Device):
         super().__init__()
 
 
-if __name__ == "__main__":
+def client_code():
     tv = TV()
     remote = RemoteControl(tv)
     remote.volume_up()
@@ -51,3 +51,7 @@ if __name__ == "__main__":
     print(radio.get_volume())
     remote.mute()
     print(radio.get_volume())
+
+
+if __name__ == "__main__":
+    client_code()
