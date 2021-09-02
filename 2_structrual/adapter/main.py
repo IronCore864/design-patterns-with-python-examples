@@ -27,7 +27,7 @@ class SquarePegAdapter(RoundPeg):
         return self.peg.width * 0.707
 
 
-if __name__ == "__main__":
+def client_code():
     hole = RoundHole(5)
 
     round_peg = RoundPeg(5)
@@ -37,3 +37,7 @@ if __name__ == "__main__":
     large_square_peg_adapter = SquarePegAdapter(SquarePeg(10))
     assert hole.fits(small_square_peg_adapter) == True
     assert hole.fits(large_square_peg_adapter) == False
+
+
+if __name__ == "__main__":
+    client_code()
