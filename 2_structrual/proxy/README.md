@@ -1,5 +1,9 @@
 Proxy is a structural design pattern that lets you provide a substitute or placeholder for another object. A proxy controls access to the original object, allowing you to perform something either before or after the request gets through to the original object.
 
+![](proxy1.png)
+
+![](proxy2.png)
+
 - Lazy initialization (virtual proxy). This is when you have a heavyweight service object that wastes system resources by being always up, even though you only need it from time to time.
 - Access control (protection proxy). This is when you want only specific clients to be able to use the service object; for instance, when your objects are crucial parts of an operating system and clients are various launched applications (including malicious ones).
 - Local execution of a remote service (remote proxy). This is when the service object is located on a remote server.
